@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import requests
+import json
 
 load_dotenv()  # load variables from .env file
 api_key = os.getenv("API_KEY")  # save API key to a variable api_key
@@ -17,6 +18,41 @@ locations = {
     "Cairo": {"latitude": 29.95375640, "longitude": 31.53700030},
     }
 
+# create function to convert_dict_to_json(locations_dict):  # function to convert cities dictionary to json file
+def cities_dict_to_json(updated_city_dict):
+    with open("cities.json", "w") as f:
+        json.dump(updated_city_dict, f, indent=4)
+
+
+# create function to load json file into python dictionary
+def load_json_to_dict():
+    with open("cities.json", "r") as file:
+        cities_dictionary = json.load(file)
+    return cities_dictionary
+
+# def check if user town in location dict:
+# def check_if_city_in_dict(place, places_locations):  # function checks if user defined place exists in location dictionary
+#     if place in places_locations:
+#         print(f"Yes, the {place} is in our list. Let's see the weather!")
+
+# def add_city_to_dict(new_city, cities_dict):  # add new city if not in locations dictionary
+#     new_city_lat = input(f"Please enter {new_city} latitude:  ")
+#     new_city_long = input(f"Please enter {new_city} longitude:  ")
+#     new_city_lat_long = {"latitude": float(new_city_lat),
+#                          "longitude": float(new_city_long),
+#                          }
+#     cities_dict[new_city] = new_city_lat_long
+#     return cities_dict
+
+#
+print("Welcome to our weather app!")
+print()
+area = input("Please select location to view the current weather conditions: ")
+
+print()
+
+
+#
 
 def get_weather(town):
     if town in locations:
@@ -48,10 +84,11 @@ def get_weather(town):
     else:
         print("Ensure correct spelling or town is included in the list of locations.")
 
-get_weather("Topolcany")
-get_weather("High Barnet")
-get_weather("San Francisco")
 
+
+get_weather(area)
+cities_dict_to_json(locations)
+load_json_to_dict()
 
 
 
