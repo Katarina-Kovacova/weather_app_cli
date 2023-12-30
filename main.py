@@ -46,28 +46,45 @@ def get_weather(town):
     town_lat = locations[town]["latitude"]
     town_long = locations[town]["longitude"]
     weather_response = requests.get(f"{api_url}&lat={town_lat}&lon={town_long}") # make call to API to receive weather data
-    town_weather = weather_response.json() # convert the API data format to json (similar to python dictionary
-    country = town_weather["sys"]["country"]
-    country_location = town_weather["name"]
-    town_current_weather_condition = town_weather["weather"][0]["description"]
-    town_current_temperature = round((town_weather["main"]["temp"]) - 273.15, 2)
-    town_min_temperature = round((town_weather["main"]["temp_min"]) - 273.15, 2)
-    town_max_temperature = round((town_weather["main"]["temp_max"]) - 273.15, 2)
-    town_wind = town_weather["wind"]["speed"]
-    town_humidity = town_weather["main"]["humidity"]
-    town_complete_data = {
-        "country:": country,
-        "location:": country_location,
-        "current_weather_condition:": town_current_weather_condition,
-        "current temperature (Celsius):": town_current_temperature,
-        "minimum temperature (Celsius)": town_min_temperature,
-        "maximum temperature (Celsius)": town_max_temperature,
-        "wind (m/s):": town_wind,
-        "humidity (%):": town_humidity,
-    }
-    for key, value in town_complete_data.items():
-        print(key, value)
-    print()
+    status = weather_response.status_code
+    print(status)
+
+    if status == 400:
+        print(f"Error {status} - Bad Request - missing parameters/ incorrect format paramenters/ values out of range.")
+    elif status == 401:
+        print(f"Error {status} - Unauthorised - access denied.")
+    elif status == 404:
+        print(f"Error {status} - Not found.")
+    elif status == 429:
+        print(f"Error {status} - Too many requests.")
+    elif 499 < status < 600:
+        print(f"Error {status} - Unexpected Error.")
+    elif 99 < status < 200 and 300 < status < 400:
+        raise Exception("Unsuccessful request.")
+    else:
+
+        town_weather = weather_response.json() # convert the API data format to json (similar to python dictionary
+        country = town_weather["sys"]["country"]
+        country_location = town_weather["name"]
+        town_current_weather_condition = town_weather["weather"][0]["description"]
+        town_current_temperature = round((town_weather["main"]["temp"]) - 273.15, 2)
+        town_min_temperature = round((town_weather["main"]["temp_min"]) - 273.15, 2)
+        town_max_temperature = round((town_weather["main"]["temp_max"]) - 273.15, 2)
+        town_wind = town_weather["wind"]["speed"]
+        town_humidity = town_weather["main"]["humidity"]
+        town_complete_data = {
+            "country:": country,
+            "location:": country_location,
+            "current_weather_condition:": town_current_weather_condition,
+            "current temperature (Celsius):": town_current_temperature,
+            "minimum temperature (Celsius)": town_min_temperature,
+            "maximum temperature (Celsius)": town_max_temperature,
+            "wind (m/s):": town_wind,
+            "humidity (%):": town_humidity,
+        }
+        for key, value in town_complete_data.items():
+            print(key, value)
+        print()
 
 
 if __name__ == "__main__":
@@ -77,7 +94,13 @@ if __name__ == "__main__":
     print()
     area = input("Please select location to view the current weather conditions: ")
     print()
-    if area not in locations:
+
+    if area in locations:
+        try:
+            get_weather(area)
+        except KeyError:
+            print("Unsuccesful request")
+    else:
         print(f"Sorry this city is not on the list.\nIf you know the {area} latitude and longidute, please enter it now.")
         print()
         area_latitude = input(f"{area} latitude: ")
@@ -86,8 +109,8 @@ if __name__ == "__main__":
         cities_dict_to_json(updated_cities_locations)
         print()
         get_weather(area)
-    else:
-        get_weather(area)
+
+
 
 
 
