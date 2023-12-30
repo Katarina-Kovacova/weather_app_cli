@@ -38,5 +38,13 @@
     "Berlin": {
         "latitude": 52.50056,
         "longitude": 13.39889
+    },
+    "Vienna": {
+        "latitude": 48.20849,
+        "longitude": 16.37208
+    },
+    "Dubai": {
+        "latitude": 25.276987,
+        "longitude": 55.296249
     }
 }
