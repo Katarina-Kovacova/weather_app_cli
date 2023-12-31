@@ -4,19 +4,19 @@ import requests
 import json
 
 load_dotenv()  # load variables from .env file
-api_key = os.getenv("API_KEY")  # save API key to a variable api_key
+api_key = os.getenv("OPENWEATHER_API_KEY")  # save API key to a variable api_key
 
-api_url = os.getenv("API_URL")  # save API key to a variable api_key
+api_url = os.getenv("OPENWEATHER_URL")  # save API key to a variable api_key
 api_url = f"{api_url}?appid={api_key}"  # save API link to a variable api
 
 
-# locations = {
-#     "High Barnet": {"latitude": 51.650341, "longitude": -0.195190},
-#     "Topolcany": {"latitude": 48.554499, "longitude": 18.179364},
-#     "San Francisco": {"latitude": 37.773972, "longitude": -122.431297},
-#     "Bratislava": {"latitude": 48.148598, "longitude": 17.107748},
-#     "Cairo": {"latitude": 29.95375640, "longitude": 31.53700030},
-#     }
+locations = {
+    "High Barnet": {"latitude": 51.650341, "longitude": -0.195190},
+    "Topolcany": {"latitude": 48.554499, "longitude": 18.179364},
+    "San Francisco": {"latitude": 37.773972, "longitude": -122.431297},
+    "Bratislava": {"latitude": 48.148598, "longitude": 17.107748},
+    "Cairo": {"latitude": 29.95375640, "longitude": 31.53700030},
+    }
 
 
 # create function to convert_dict_to_json(locations_dict):  # function to convert cities dictionary to json file
@@ -42,12 +42,12 @@ def add_city_to_dict(new_city, new_city_lat, new_city_long, cities_dict):  # add
 
 print()
 
+
 def get_weather(town):
     town_lat = locations[town]["latitude"]
     town_long = locations[town]["longitude"]
     weather_response = requests.get(f"{api_url}&lat={town_lat}&lon={town_long}") # make call to API to receive weather data
     status = weather_response.status_code
-    print(status)
 
     if status == 400:
         print(f"Error {status} - Bad Request - missing parameters/ incorrect format paramenters/ values out of range.")
@@ -88,8 +88,11 @@ def get_weather(town):
 
 
 if __name__ == "__main__":
+    try:
+        locations = load_json_to_dict()
+    except FileNotFoundError:
+        cities_dict_to_json(locations)
 
-    locations = load_json_to_dict()
     print("Welcome to our weather app!")
     print()
     area = input("Please select location to view the current weather conditions: ")
@@ -99,9 +102,9 @@ if __name__ == "__main__":
         try:
             get_weather(area)
         except KeyError:
-            print("Unsuccesful request")
+            print("Unsuccessful request")
     else:
-        print(f"Sorry this city is not on the list.\nIf you know the {area} latitude and longidute, please enter it now.")
+        print(f"Sorry this city is not on the list.\nIf you know the {area} latitude and longitude, please enter it now.")
         print()
         area_latitude = input(f"{area} latitude: ")
         area_longitude = input(f"{area} longitude: ")
