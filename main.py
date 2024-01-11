@@ -21,6 +21,7 @@ locations = {
 }
 
 
+
 # create function to convert_dict_to_json(locations_dict):  # function to convert cities dictionary to json file
 def cities_dict_to_json(locations_dict):
     with open("cities.json", "w") as f:
@@ -48,6 +49,8 @@ def get_weather(town):
     town_long = locations[town]["longitude"]
     # make call to API to receive weather data
     weather_response = requests.get(f"{api_url}&lat={town_lat}&lon={town_long}")
+    print(weather_response)
+
 
     if 200 <= weather_response.status_code <= 299:
         # convert the API data format to json (similar to python dictionary
@@ -73,11 +76,15 @@ def get_weather(town):
         for key, value in town_complete_data.items():
             print(key, value)
     elif weather_response.status_code in BAD_RESPONSE_CODES_WE_CANNOT_DO_ANYTHING_ABOUT:
-        print(weather_response.status_code)
-        # TODO: print(f"Error: {weather_response.content['cod']} - {weather_response.content['message']}")
+        #print(weather_response.status_code)
+        #print(weather_response.content)  # prints the content of the error message
+        new_weather_response = json.loads(weather_response.content.decode('utf-8'))  #error message cast from b-type string to dictionary
+        print(f"Error: {new_weather_response['cod']} - {new_weather_response['message']}")
     elif weather_response.status_code in BAD_RESPONSE_CODES_WE_CAN_DO_SOMETHING_ABOUT:
         print(weather_response.status_code)
-        # TODO print(f"Error: {weather_response.content['cod']} - {weather_response.content['message']}")
+        print(weather_response.content)  # prints the content of the error message
+        new_weather_response = json.loads(weather_response.content.decode('utf-8'))
+        print(f"Error: {new_weather_response['cod']} - {new_weather_response['message']}")
     elif 99 < weather_response.status_code < 200 or 300 < weather_response.status_code < 400 or 500 <= weather_response.status_code <= 599:
         raise Exception("Unsuccessful request.")
 
