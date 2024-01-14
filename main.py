@@ -21,6 +21,10 @@ locations = {
 }
 
 
+# def lower_case_dict(locations_dict):
+#     lower_case_locations = dict((k.lower(), v) for k, v in locations_dict.items())
+#     return lower_case_locations
+
 
 # create function to convert_dict_to_json(locations_dict):  # function to convert cities dictionary to json file
 def cities_dict_to_json(locations_dict):
@@ -97,7 +101,8 @@ except FileNotFoundError:
 
 print("Welcome to our weather app!")
 
-area = input("Please select location to view the current weather conditions: ")
+area = input("Please select location to view the current weather conditions: ").title()
+
 
 if area in locations:
     get_weather(area)
