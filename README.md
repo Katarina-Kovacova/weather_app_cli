@@ -1,1 +1,1 @@
-The app utilises sn Open weather API to obtain weather data from selected a city, adding new locations into a .json file. 
+The app utilises an Open weather API to obtain weather data from a selected city, adding new locations into a .json file. 
