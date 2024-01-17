@@ -21,11 +21,6 @@ locations = {
 }
 
 
-# def lower_case_dict(locations_dict):
-#     lower_case_locations = dict((k.lower(), v) for k, v in locations_dict.items())
-#     return lower_case_locations
-
-
 # create function to convert_dict_to_json(locations_dict):  # function to convert cities dictionary to json file
 def cities_dict_to_json(locations_dict):
     with open("cities.json", "w") as f:
@@ -54,7 +49,6 @@ def get_weather(town):
     # make call to API to receive weather data
     weather_response = requests.get(f"{api_url}&lat={town_lat}&lon={town_long}")
     print(weather_response)
-
 
     if 200 <= weather_response.status_code <= 299:
         # convert the API data format to json (similar to python dictionary
