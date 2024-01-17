@@ -1,1 +1,1 @@
-The app utilises an Open weather API to obtain weather data from a selected city, adding new locations into a .json file. 
+The app utilizes an API to fetch real-time weather conditions from any location specified by the user. 
