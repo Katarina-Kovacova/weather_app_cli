@@ -1,1 +1,1 @@
-Get current weather conditions from any location listed in the cities, by accessing city latitude and longitude and use of a weather API.
+The app utilizes an API to fetch real-time weather conditions from any location specified by the user. 
