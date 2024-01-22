@@ -7,5 +7,5 @@ from dotenv import load_dotenv
 import requests
 import json
 
-An Open Weather API key is required. These can be obtained from https://openweathermap.org/ by creating an account. 
+An Open Weather API key is required. This can be obtained from https://openweathermap.org/ by creating an account. 
 
