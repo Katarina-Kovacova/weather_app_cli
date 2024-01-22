@@ -33,6 +33,10 @@ def load_json_to_dict():
         cities_dictionary = json.load(file)
     return cities_dictionary
 
+def get_weather_response(town_latit, town_longit):
+    city_weather_response = requests.get(f"{api_url}&lat={town_latit}&lon={town_longit}")
+    return city_weather_response
+
 
 def add_city_to_dict(new_city, new_city_lat, new_city_long, cities_dict):  # add new city if not in locations dictionary
     new_city_lat_long = {"latitude": float(new_city_lat),
@@ -51,7 +55,7 @@ def get_weather(town):
     print(weather_response)
 
     if 200 <= weather_response.status_code <= 299:
-        # convert the API data format to json (similar to python dictionary
+        # convert the API data format to json (similar to python dictionary)
         town_weather = weather_response.json()
         country = town_weather["sys"]["country"]
         country_location = town_weather["name"]
@@ -87,6 +91,26 @@ def get_weather(town):
         raise Exception("Unsuccessful request.")
 
 
+def new_city_lat():
+    while True:
+        try:
+            new_city_latitude = float(input("Please enter the city latitude as a decimal number: "))
+            break
+        except ValueError:
+            print("Please only enter decimal numbers.")
+    return new_city_latitude
+
+
+def new_city_long():
+    while True:
+        try:
+            new_city_longitude = float(input("Please enter the city longitude as a decimal number: "))
+            break
+        except ValueError:
+            print("Please only enter decimal numbers.")
+    return new_city_longitude
+
+
 try:
     locations = load_json_to_dict()
 except FileNotFoundError:
@@ -103,12 +127,13 @@ if area in locations:
 else:
     print(f"Sorry this city is not on the list.\nIf you know the {area} latitude and longitude, please enter it now.")
     print()
-    # TODO: CREATE FUNCTION TO GET NEW CITY LAT AND LONG (catch input errors if any)
-    # TODO: CREATE FUNCTION TO CHECK RESPONSE STATUS
-    # TODO: IF STATUS CODE OK: ADD NEW CITY ELSE DON'T ADD CITY
-    area_latitude = input(f"{area} latitude: ")
-    area_longitude = input(f"{area} longitude: ")
-    # get response
-    updated_cities_locations = add_city_to_dict(area, area_latitude, area_longitude, locations)
-    cities_dict_to_json(updated_cities_locations)
-    get_weather(area)
+    area_latitude = new_city_lat()
+    area_longitude = new_city_long()
+    new_area_response = get_weather_response(area_latitude, area_longitude)
+    if 200 <= new_area_response.status_code <= 299:
+        updated_cities_locations = add_city_to_dict(area, area_latitude, area_longitude, locations)
+        cities_dict_to_json(updated_cities_locations)
+        get_weather(area)
+    else:
+        print("Unsuccessful request.")
+
