@@ -33,26 +33,28 @@ def load_json_to_dict():
         cities_dictionary = json.load(file)
     return cities_dictionary
 
+
+# function returns the weather response on an API call for a new city that is not listed
 def get_weather_response(town_latit, town_longit):
     city_weather_response = requests.get(f"{api_url}&lat={town_latit}&lon={town_longit}")
     return city_weather_response
 
 
-def add_city_to_dict(new_city, new_city_lat, new_city_long, cities_dict):  # add new city if not in locations dictionary
-    new_city_lat_long = {"latitude": float(new_city_lat),
-                         "longitude": float(new_city_long),
+# function to add new city if not in locations dictionary
+def add_city_to_dict(new_city, new_city_latitude, new_city_longitude, cities_dict):
+    new_city_lat_long = {"latitude": float(new_city_latitude),
+                         "longitude": float(new_city_longitude),
                          }
-
     cities_dict[new_city] = new_city_lat_long
     return cities_dict
 
 
+# function to obtain city weather data
 def get_weather(town):
     town_lat = locations[town]["latitude"]
     town_long = locations[town]["longitude"]
     # make call to API to receive weather data
     weather_response = requests.get(f"{api_url}&lat={town_lat}&lon={town_long}")
-    print(weather_response)
 
     if 200 <= weather_response.status_code <= 299:
         # convert the API data format to json (similar to python dictionary)
@@ -78,19 +80,20 @@ def get_weather(town):
         for key, value in town_complete_data.items():
             print(key, value)
     elif weather_response.status_code in BAD_RESPONSE_CODES_WE_CANNOT_DO_ANYTHING_ABOUT:
-        #print(weather_response.status_code)
-        #print(weather_response.content)  # prints the content of the error message
-        new_weather_response = json.loads(weather_response.content.decode('utf-8'))  #error message cast from b-type string to dictionary
+        # error message cast from b-type string to dictionary
+        new_weather_response = json.loads(weather_response.content.decode('utf-8'))
         print(f"Error: {new_weather_response['cod']} - {new_weather_response['message']}")
     elif weather_response.status_code in BAD_RESPONSE_CODES_WE_CAN_DO_SOMETHING_ABOUT:
         print(weather_response.status_code)
         print(weather_response.content)  # prints the content of the error message
         new_weather_response = json.loads(weather_response.content.decode('utf-8'))
         print(f"Error: {new_weather_response['cod']} - {new_weather_response['message']}")
-    elif 99 < weather_response.status_code < 200 or 300 < weather_response.status_code < 400 or 500 <= weather_response.status_code <= 599:
+    elif 99 < weather_response.status_code < 200 or 300 < weather_response.status_code < 400 or \
+            500 <= weather_response.status_code <= 599:
         raise Exception("Unsuccessful request.")
 
 
+# function returns user input for new city latitude
 def new_city_lat():
     while True:
         try:
@@ -101,6 +104,7 @@ def new_city_lat():
     return new_city_latitude
 
 
+# function returns user input for new city longitude
 def new_city_long():
     while True:
         try:
@@ -111,6 +115,7 @@ def new_city_long():
     return new_city_longitude
 
 
+# locations will be loaded from .json file if .json file exists. If not, the default location dictionary will be used
 try:
     locations = load_json_to_dict()
 except FileNotFoundError:
@@ -118,12 +123,17 @@ except FileNotFoundError:
     print("File not found. Using default locations.")
 
 print("Welcome to our weather app!")
-
 area = input("Please select location to view the current weather conditions: ").title()
 
-
+"""
+check if area is listed, the weather conditions are fetched and printed
+if city is not listed, user inputs new city latitude and longitude. 
+If response successful, city is added to .json and weather conditions are displayed.
+If response unsuccessful, user gets a "Unsuccessful request message and to re-enter correct data."
+"""
 if area in locations:
     get_weather(area)
+
 else:
     print(f"Sorry this city is not on the list.\nIf you know the {area} latitude and longitude, please enter it now.")
     print()
@@ -135,5 +145,5 @@ else:
         cities_dict_to_json(updated_cities_locations)
         get_weather(area)
     else:
-        print("Unsuccessful request.")
+        print("Unsuccessful request. Please check you have entered the correct info and try again.")
 
